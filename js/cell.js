@@ -7,6 +7,11 @@ function Cell(i, j) {
   this.j = j;
   this.walls = [true, true, true, true];
   this.visited = false;
+  this.path = false;
+  this.animate = false;
+  this.points = false;
+  this.s = false;
+  this.e = false;
 
   this.checkNeighbors = function() {
     var neighbors = [];
@@ -16,25 +21,25 @@ function Cell(i, j) {
     var bottom = grid[index(i, j+1)];
     var left   = grid[index(i-1, j)];
 
-    if (top && !top.visited) {
+    if (top && top.path) {
       neighbors.push(top);
     }
-    if (right && !right.visited) {
+    else if (right && right.path) {
       neighbors.push(right);
     }
-    if (bottom && !bottom.visited) {
+    else if (bottom && bottom.path) {
       neighbors.push(bottom);
     }
-    if (left && !left.visited) {
+    else if (left && left.path) {
       neighbors.push(left);
     }
 
-    if (neighbors.length > 0) {
-      var r = floor(random(0, neighbors.length));
-      return neighbors[r];
-    } else {
-      return undefined;
-    }
+    // if (neighbors.length > 0) {
+    //   var r = floor(random(0, neighbors.length));
+    //   return neighbors[r];
+    // } else {
+    //   return undefined;
+    // }
 
   }
   this.highlight = function() {
@@ -48,7 +53,7 @@ function Cell(i, j) {
   this.show = function() {
     var x = this.i*w;
     var y = this.j*w;
-    stroke(255);
+    stroke(0);
     if (this.walls[0]) {
       line(x    , y    , x + w, y);
     }
@@ -60,6 +65,27 @@ function Cell(i, j) {
     }
     if (this.walls[3]) {
       line(x    , y + w, x    , y);
+    }
+
+    if (this.s) {
+      noStroke();
+      fill(50, 255, 30);
+      rect(x, y, w, w);
+    }
+    else if (this.e){
+
+      noStroke();
+      fill(255, 0, 0);
+      rect(x, y, w, w);
+    }else if (this.points){
+
+      noStroke(); 
+      fill(255, 210, 0);
+      rect(x, y, w, w);
+    }else if (this.animate){
+      noStroke(); 
+      fill(255, 255, 255);
+      rect(x, y, w, w);
     }
 
     if (this.visited) {
