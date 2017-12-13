@@ -1,10 +1,6 @@
-// Daniel Shiffman
-// http://codingrainbow.com
-// http://patreon.com/codingrainbow
-
+var grid = [];
 var cols, rows;
 var w = 20;
-var grid = [];
 
 var current;
 
@@ -16,6 +12,8 @@ var animate = [];
 var animate_counter = 0;
 var animate_bool = false;
 
+var score = 0;
+
 //default : 30x30
 //start...cords...end
 var mapSetup = [150, 155, 485, 504, 174, 164, 764, 779];
@@ -25,9 +23,10 @@ var start = mapSetup[0];
 var end = mapSetup[mapSetup.length - 1];
 
 function setup() {
-  createCanvas(600, 600);
-  cols = floor(width/w);
-  rows = floor(height/w);
+  createCanvas(900, 600);
+  var square = 600;
+  cols = floor(square/w);
+  rows = floor(square/w);
   //frameRate(5);
 
   for (var   j = 0; j < rows; j++) {
@@ -46,7 +45,7 @@ function resetGame(){
   start = mapSetup[0];
   end = mapSetup[mapSetup.length - 1];
 
-
+  //Clear Map
   for (var i = 0; i < grid.length; i++) {
     grid[i].visited = false;
     grid[i].animate = false;
@@ -55,48 +54,8 @@ function resetGame(){
 
   for (var i = 1; i < mapSetup.length - 1; i++) {
     grid[mapSetup[i]].s = false;
-    // grid[i].animate = false;
-    // grid[i].points = true;
   }
 
-
-}
-function AStar(start, goal) {
-  // var openHeap = getHeap();
-  // var closestNode = start;
-
-  // start.h = heuristic_cost_estimate(start, goal);
-  // //start.markDirty(start)
-  // // start.visited = true;
-
-  // openHeap.push(start)
-
-  // while (openHeap.size() > 0) {
-
-  //   var currentNode = openHeap.pop();
-
-  //   if(currentNode === end) {
-  //     return pathTo(currentNode);
-  //   }
-
-  //   currentNode.visited = true;
-
-  //   // var checkNeighbors
-  //   // var minI = 0;
-  //   // for(var i = 1 ; i < openSet.length ; i++){
-  //   //   if(openSet[minI] > openSet[i]){
-  //   //     minI = i;
-  //   //   }
-  //   // }
-  //   //node with lowest fScore value
-  //   var fScoreIter = fScore.values();
-  //   var min = fScoreIter.next().value;
-  //   while(fScoreIter.next() != null){
-  //     if(min > )
-  //   }
-  //   var c = fScore.get()
-  //   var c = openSet[minI];
-  // }
 
 }
 
@@ -154,41 +113,6 @@ function executeAStar(start, end, mapPoint) {
   }else {
     return true;
   }
-
-  // while(current != grid[end]){
-  //   current.visited = true;
-  //   current.highlight();
-
-  //   if(current == grid[end]){
-  //     runScore=false;
-  //   }
-
-  //   var next = current.checkNeighbors();
-  //   if (next) {
-  //     next.visited = true;
-
-  //     stack.push(current);
-  //     // queue.enqueue(current);
-
-  //     removeWalls(current, next);
-
-  //     current = next;
-  //   } else if (stack.length > 0) {
-  //     current = stack.pop();
-  //   // } else if (queue.getLength() > 0){
-  //   //   current = queue.dequeue();
-  //   // }
-  //   }
-  // }
-
-  // while(stack.length > 0){
-  //   temp = stack.pop();
-  //   temp.path = true;
-  // }
-  // while(!queue.isEmpty()){
-  //   temp = queue.dequeue();
-  //   temp.path = true;
-  // }
 }
 
 function mouseReleased() {
@@ -222,6 +146,7 @@ function keyPressed() {
   //SPACE
   if(keyCode == 32){
     runScore = true;
+    score = 0;
   }
   if(keyCode == ENTER){
     resetGame();
@@ -264,32 +189,43 @@ function draw() {
         grid[v].s = true;
       }
     }
-
+    score++;
     animate_counter++;
 
     if(animate_counter >= animate.length){
       console.log("Score : " + animate_counter);
-      var score = animate_counter - 91;
-
-      if(score > 700){
-        console.log("Godlike : " + score + " additional moves!");
-      }else if(score > 600){
-        console.log("Grand Master : " + score + " additional moves!");
-      }else if(score > 500){
-        console.log("Master : " + score + " additional moves!");
-      }else if(score > 400){
-        console.log("Elite : " + score + " additional moves!");
-      }else if(score > 300){
-        console.log("Advanced : " + score + " additional moves!");
-      }else if(score > 200){
-        console.log("Intermediate : " + score + " additional moves!");
-      }else{
-        console.log("Beginner : " + score + " additional moves!");
-      }
+      score = animate_counter - 91;
       
       animate_counter = 0;
       animate_bool = false;
+      resetGame();
     }
+  }
+
+  drawConsole();
+}
+
+function drawConsole() {
+  textSize(32);
+  fill(255, 204, 100);
+  var x1 = 630;
+  text("Score : " + score, 630, 50);
+
+  textSize(20);
+  if(score > 700){     
+    text("Godlike : " + score + " additional moves!", x1, 100);
+  }else if(score > 600){
+    text("Grand Master : " + score + " additional moves!", x1, 100);
+  }else if(score > 500){
+    text("Master : " + score + " additional moves!", x1, 100);
+  }else if(score > 400){
+    text("Elite : " + score + " additional moves!", x1, 100);
+  }else if(score > 300){
+    text("Advanced : " + score + " additional moves!", x1, 100);
+  }else if(score > 200){
+    text("Intermediate : " + score + " additional moves!", x1, 100);
+  }else{
+    text("Beginner : " + score + " additional moves!", x1, 100);
   }
 }
 
@@ -300,26 +236,7 @@ function index(i, j) {
   return i + j * cols;
 }
 
-
-function removeWalls(a, b) {
-  var x = a.i - b.i;
-  if (x === 1) {
-    a.walls[3] = false;
-    b.walls[1] = false;
-  } else if (x === -1) {
-    a.walls[1] = false;
-    b.walls[3] = false;
-  }
-  var y = a.j - b.j;
-  if (y === 1) {
-    a.walls[0] = false;
-    b.walls[2] = false;
-  } else if (y === -1) {
-    a.walls[2] = false;
-    b.walls[0] = false;
-  }
-}
-
+// Binary Heap
 
 function getHeap() {
   return new BinaryHeap(function(node) {
