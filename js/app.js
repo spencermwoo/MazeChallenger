@@ -44,19 +44,19 @@ function resetGame(){
   animate = [];
   start = mapSetup[0];
   end = mapSetup[mapSetup.length - 1];
+  
+  for (var i = 1; i < mapSetup.length - 1; i++) {
+    grid[mapSetup[i]].s = false;
+  }
+}
 
+function resetMaze(){
   //Clear Map
   for (var i = 0; i < grid.length; i++) {
     grid[i].visited = false;
     grid[i].animate = false;
     grid[i].path = false;
   }
-
-  for (var i = 1; i < mapSetup.length - 1; i++) {
-    grid[mapSetup[i]].s = false;
-  }
-
-
 }
 
 function executeAStar(start, end, mapPoint) {
@@ -158,6 +158,7 @@ function keyPressed() {
   }
   if(keyCode == ENTER){
     resetGame();
+    resetMaze();
   }
 }
 
@@ -221,7 +222,7 @@ function drawConsole() {
   text("Score : " + score, x1, y1/2);
 
   textSize(32);
-  if(score > 1900){     
+  if(score > 1900){
     text("Godlike", x1, y1);
   }else if(score > 1500){
     text("Grand Master", x1, y1);
@@ -256,7 +257,7 @@ function drawConsole() {
   text("Entry", x1 + offset, entryTextY);
   text("Exit", x1 + offset, entryTextY + offset);
 
-  text("MOUSE to create maze.\nSPACE to submit your maze.\n\nENTER to reset your maze.", x1, y1*4);
+  text("MOUSE to build the maze.\nSPACE to submit the maze.\n\nENTER to reset the maze.", x1, y1*4);
 }
 
 function index(i, j) {
