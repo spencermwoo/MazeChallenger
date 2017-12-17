@@ -211,14 +211,16 @@ function draw() {
 function drawConsole() {
   var x1 = 630;
   var y1 = 100;
+  noStroke();
 
   textSize(32);
-  fill(255, 204, 100);
+  // fill(255, 204, 100);
+  // colorMode(HSB, 100);
+  fill(color('magenta'));
 
   text("Score : " + score, x1, y1/2);
 
-  textSize(20);
-  fill(255,255,255);
+  textSize(32);
   if(score > 1900){     
     text("Godlike", x1, y1);
   }else if(score > 1500){
@@ -231,11 +233,12 @@ function drawConsole() {
     text("Advanced", x1, y1);
   }else if(score > 200){
     text("Intermediate", x1, y1);
-  }else if(score > 90){
+  }else if(score > 96){
     text("Beginner", x1, y1);
   }else{
 
   }
+  fill(255, 255, 255);
 
   textSize(15);
   text("Build a maze.", x1, y1*2);
