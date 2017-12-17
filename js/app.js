@@ -128,14 +128,14 @@ function mouseDragged(){
 
   }else if(mouseX < 600 && mouseY < 600){
     tile = mouseTile();
-    tile.visited = true;
+    tile.visited = (mouseButton == LEFT);
   }
 }
 
 function mousePressed() {
   if(isRunning()){
 
-  }else if(mouseX < 600 && mouseY < 600){
+  }else if(mouseX < 600 && mouseY < 600 && mouseButton == LEFT){
     tile = mouseTile();
     tile.visited = !tile.visited;
   }
@@ -241,7 +241,7 @@ function drawConsole() {
   fill(255, 255, 255);
 
   textSize(15);
-  text("Build a maze.", x1, y1*2);
+  text("Objective : Build the longest maze.", x1, y1*2);
 
   var entryTextY = y1*2 + 50;
   var offset = 30;
@@ -256,7 +256,7 @@ function drawConsole() {
   text("Entry", x1 + offset, entryTextY);
   text("Exit", x1 + offset, entryTextY + offset);
 
-  text("SPACE to submit your maze.\nENTER to reset your maze.", x1, y1*4);
+  text("MOUSE to create maze.\nSPACE to submit your maze.\n\nENTER to reset your maze.", x1, y1*4);
 }
 
 function index(i, j) {
