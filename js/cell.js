@@ -10,6 +10,7 @@ function Cell(i, j) {
   this.path = false;
   this.animate = false;
   this.points = false;
+  this.number = 0;
   this.s = false;
   this.e = false;
 
@@ -68,21 +69,27 @@ function Cell(i, j) {
     }
 
     if (this.s) {
+      //green start
       noStroke();
       fill(50, 255, 30);
       rect(x, y, w, w);
     }
     else if (this.e){
-
+      //red end
       noStroke();
       fill(255, 0, 0);
       rect(x, y, w, w);
     }else if (this.points){
-
+      //yellow points
       noStroke(); 
       fill(255, 210, 0);
       rect(x, y, w, w);
+
+      textSize(17);
+      fill(0, 0 ,0 );
+      text(this.number, x + (w*1)/4, y + (w*3)/4);
     }else if (this.animate){
+      //white naimation
       noStroke(); 
       fill(255, 255, 255);
       rect(x, y, w, w);

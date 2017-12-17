@@ -89,7 +89,7 @@ function executeAStar(start, end, mapPoint) {
 
   var result = astar.search(graph, s, e);
   if(result.length < 1){
-    console.log("Invalid Maze.  There is no way through!");
+    alert("Invalid Maze.  There is no way through!");
     resetGame();
     return false;
   }
@@ -124,23 +124,32 @@ function mouseTile(){
 }
 
 function mouseDragged(){
-  if(mouseX < 600 && mouseY < 600){
+  if(isRunning()){
+
+  }else if(mouseX < 600 && mouseY < 600){
     tile = mouseTile();
     tile.visited = true;
   }
 }
+
 function mousePressed() {
-  if(mouseX < 600 && mouseY < 600){
+  if(isRunning()){
+
+  }else if(mouseX < 600 && mouseY < 600){
     tile = mouseTile();
     tile.visited = !tile.visited;
   }
+}
+
+function isRunning(){
+  return (runScore || animate_bool);
 }
 
 function keyPressed() {
   current = grid[start];
   //SPACE
   if(keyCode == 32){
-    if(runScore){
+    if(isRunning()){
 
     }else{
       runScore = true;
@@ -162,6 +171,7 @@ function draw() {
   grid[end].e = true;
   for (var i = 1; i < mapSetup.length - 1; i++){
     grid[mapSetup[i]].points = true;
+    grid[mapSetup[i]].number = i;
   }
 
   if(runScore){
@@ -183,16 +193,11 @@ function draw() {
     }
     grid[v].animate = true;
 
-    // for (var i = 1; i < mapSetup.length - 1; i++) {
-    //   if(v == mapSetup[i] && ) {
-    //     grid[v].s = true;
-    //   }
-    // }
     score++;
     animate_counter++;
 
     if(animate_counter >= animate.length){
-      console.log("Score : " + animate_counter);
+      // console.log("Score : " + animate_counter);
       
       animate_counter = 0;
       animate_bool = false;
@@ -231,6 +236,24 @@ function drawConsole() {
   }else{
 
   }
+
+  textSize(15);
+  text("Build a maze.", x1, y1*2);
+
+  var entryTextY = y1*2 + 50;
+  var offset = 30;
+  var draw_offset = - 15;
+  fill(50, 255, 30);
+  rect(x1, entryTextY + draw_offset, 20, 20);
+
+  fill(255, 0, 0);
+  rect(x1, entryTextY + draw_offset + offset, 20, 20);
+
+  fill(255, 255, 255);
+  text("Entry", x1 + offset, entryTextY);
+  text("Exit", x1 + offset, entryTextY + offset);
+
+  text("SPACE to submit your maze.\nENTER to reset your maze.", x1, y1*4);
 }
 
 function index(i, j) {
