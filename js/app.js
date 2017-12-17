@@ -107,6 +107,7 @@ function executeAStar(start, end, mapPoint) {
   }
   mapPoint++;
   if(mapPoint < mapSetup.length){
+    animate.push(v);
     start = mapSetup[mapPoint-1];
     end = mapSetup[mapPoint];
     return executeAStar(start, end, mapPoint);
@@ -115,38 +116,36 @@ function executeAStar(start, end, mapPoint) {
   }
 }
 
-function mouseReleased() {
-
+function mouseTile(){
+  w2 = (int)(mouseX / w);
+  h2 = (int)(mouseY / w);
+  t2 = (int)(h2 * cols) + w2;
+  return grid[t2];
 }
 
 function mouseDragged(){
-  w2 = (int)(mouseX / w);
-  h2 = (int)(mouseY / w);
-  t2 = (int)(h2 * cols) + w2;
-
-  temp = grid[t2];
-
-  temp.visited = true;
+  if(mouseX < 600 && mouseY < 600){
+    tile = mouseTile();
+    tile.visited = true;
+  }
 }
-//toggle tower enabled
-function mouseClicked() {
-  // runScore = true;
-
-  w2 = (int)(mouseX / w);
-  h2 = (int)(mouseY / w);
-  t2 = (int)(h2 * cols) + w2;
-
-  temp = grid[t2];
-
-  temp.visited = !temp.visited;
+function mousePressed() {
+  if(mouseX < 600 && mouseY < 600){
+    tile = mouseTile();
+    tile.visited = !tile.visited;
+  }
 }
 
 function keyPressed() {
   current = grid[start];
   //SPACE
   if(keyCode == 32){
-    runScore = true;
-    score = 0;
+    if(runScore){
+
+    }else{
+      runScore = true;
+      score = 0;
+    }
   }
   if(keyCode == ENTER){
     resetGame();
@@ -173,28 +172,27 @@ function draw() {
   if(animate_bool){
     
     runScore = false;
-    // for(var x = animate_counter ; x > -1 ; x--){
-    //   grid[animate[x]].animate
-    // }
 
     var v = animate[animate_counter];
     if(animate_counter > 0){
       grid[animate[animate_counter-1]].animate = false;
-    }
-    grid[v].animate = true;
 
-
-    for (var i = 1; i < mapSetup.length - 1; i++) {
-      if(v == mapSetup[i]) {
+      if(v == animate[animate_counter-1]){
         grid[v].s = true;
       }
     }
+    grid[v].animate = true;
+
+    // for (var i = 1; i < mapSetup.length - 1; i++) {
+    //   if(v == mapSetup[i] && ) {
+    //     grid[v].s = true;
+    //   }
+    // }
     score++;
     animate_counter++;
 
     if(animate_counter >= animate.length){
       console.log("Score : " + animate_counter);
-      score = animate_counter - 91;
       
       animate_counter = 0;
       animate_bool = false;
@@ -206,26 +204,32 @@ function draw() {
 }
 
 function drawConsole() {
+  var x1 = 630;
+  var y1 = 100;
+
   textSize(32);
   fill(255, 204, 100);
-  var x1 = 630;
-  text("Score : " + score, 630, 50);
+
+  text("Score : " + score, x1, y1/2);
 
   textSize(20);
-  if(score > 700){     
-    text("Godlike : " + score + " additional moves!", x1, 100);
-  }else if(score > 600){
-    text("Grand Master : " + score + " additional moves!", x1, 100);
-  }else if(score > 500){
-    text("Master : " + score + " additional moves!", x1, 100);
+  fill(255,255,255);
+  if(score > 1900){     
+    text("Godlike", x1, y1);
+  }else if(score > 1500){
+    text("Grand Master", x1, y1);
+  }else if(score > 1100){
+    text("Master", x1, y1);
+  }else if(score > 700){
+    text("Elite", x1, y1);
   }else if(score > 400){
-    text("Elite : " + score + " additional moves!", x1, 100);
-  }else if(score > 300){
-    text("Advanced : " + score + " additional moves!", x1, 100);
+    text("Advanced", x1, y1);
   }else if(score > 200){
-    text("Intermediate : " + score + " additional moves!", x1, 100);
+    text("Intermediate", x1, y1);
+  }else if(score > 90){
+    text("Beginner", x1, y1);
   }else{
-    text("Beginner : " + score + " additional moves!", x1, 100);
+
   }
 }
 
