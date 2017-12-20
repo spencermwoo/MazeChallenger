@@ -9,3 +9,6 @@ Hopefully I end with a fun maze game.
 
 [socket.io](http://socket.io/)
 [express.js](http://expressjs.com/)
+
+[astar](https://github.com/bgrins/javascript-astar)
+[binary heap](http://eloquentjavascript.net/appendix2.html)
