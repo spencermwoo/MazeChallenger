@@ -1,15 +1,15 @@
-var map = 600;
-var console = 300;
+var map_size = 600;
+var console_size = 300;
 
 var grid = [];
 var cols, rows;
-var size = 20;
+var tile_size = 20;
 
 var animate_path = [];
 var animate_counter = 0;
 
-var isRunning = false;
 var isAnimate = false;
+var isPathing = false;
 
 var score = 0;
 
@@ -21,9 +21,9 @@ var start_index = mapSetup[0];
 var end_index = mapSetup[mapSetup.length - 1];
 
 function setup() {
-  createCanvas(map + console, map);
-  cols = floor(map/size);
-  rows = floor(map/size);
+  createCanvas(map_size + console_size, map_size);
+  cols = floor(map_size/tile_size);
+  rows = floor(map_size/tile_size);
   //frameRate(5);
 
   for (var   j = 0; j < rows; j++) {
@@ -39,7 +39,7 @@ function resetGame(){
   animate_counter = 0;
 
   isAnimate = false;
-  isRunning = false;
+  isPathing = false;
 
   start_index = mapSetup[0];
   end_index = mapSetup[mapSetup.length - 1];
@@ -52,7 +52,7 @@ function resetGame(){
 function resetMaze(){
   for (var i = 0; i < grid.length; i++) {
     grid[i].visited = false;
-    grid[i].animate_path = false;
+    grid[i].animate = false;
     grid[i].path = false;
   }
 }
@@ -87,10 +87,10 @@ function executeAStar(start, end, mapPoint) {
 
   var result = astar.search(graph, s, e);
 
-  return animatePath(col, result);
-}
+//   return animatePath(col, result);
+// }
 
-function animatePath(col, result){
+// function animatePath(col, result){
   if(result.length < 1){
     alert("Invalid Maze.  There is no way through!");
     resetGame();
@@ -121,6 +121,10 @@ function animatePath(col, result){
   }
 }
 
+function isRunning(){
+  return (isPathing || isAnimate);
+}
+
 function mouseDragged(){
   if(isRunning()){
 
@@ -140,14 +144,10 @@ function mousePressed() {
 }
 
 function mouseTile(){
-  w2 = (int)(mouseX / size);
-  h2 = (int)(mouseY / size);
+  w2 = (int)(mouseX / tile_size);
+  h2 = (int)(mouseY / tile_size);
   t2 = (int)(h2 * cols) + w2;
   return grid[t2];
-}
-
-function isRunning(){
-  return (isRunning || isAnimate);
 }
 
 function keyPressed() {
@@ -155,27 +155,28 @@ function keyPressed() {
     if(isRunning()){
 
     }else{
-      isRunning = true;
+      isPathing = true;
       score = 0;
     }
-  }else if(keyCode == ENTER){
+  }
+  if(keyCode == ENTER){
     resetGame();
     resetMaze();
   }
 }
 
 function drawAnimate(){
-    isRunning = false;
+    isPathing = false;
 
     var v = animate_path[animate_counter];
     if(animate_counter > 0){
-      grid[animate_path[animate_counter-1]].animate_path = false;
+      grid[animate_path[animate_counter-1]].animate = false;
 
       if(v == animate_path[animate_counter-1]){
         grid[v].s = true;
       }
     }
-    grid[v].animate_path = true;
+    grid[v].animate = true;
 
     score++;
     animate_counter++;
@@ -190,8 +191,6 @@ function drawAnimate(){
 }
 
 function drawMap(){
-  background(51);
-  
   for (var i = 0; i < grid.length; i++) {
     grid[i].show();
   }
@@ -205,11 +204,12 @@ function drawMap(){
 }
 
 function draw() {
+  background(51);
   drawMap();
 
-  if(isRunning){
+  if(isPathing){
     isAnimate = executeAStar(start_index, mapSetup[1], 1);
-    isRunning = false;
+    isPathing = false;
   }
 
   if(isAnimate){
