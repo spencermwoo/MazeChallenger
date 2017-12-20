@@ -1,16 +1,15 @@
+var map = 600;
+var console = 300;
+
 var grid = [];
 var cols, rows;
-var w = 20;
+var size = 20;
 
-var current;
-
-var stack = [];
-var queue = new Queue();
-var runScore = false;
-
-var animate = [];
+var animate_path = [];
 var animate_counter = 0;
-var animate_bool = false;
+
+var isRunning = false;
+var isAnimate = false;
 
 var score = 0;
 
@@ -18,15 +17,13 @@ var score = 0;
 //start...cords...end
 var mapSetup = [150, 155, 485, 504, 174, 164, 764, 779];
 
-var start = mapSetup[0];
-
-var end = mapSetup[mapSetup.length - 1];
+var start_index = mapSetup[0];
+var end_index = mapSetup[mapSetup.length - 1];
 
 function setup() {
-  createCanvas(900, 600);
-  var square = 600;
-  cols = floor(square/w);
-  rows = floor(square/w);
+  createCanvas(map + console, map);
+  cols = floor(map/size);
+  rows = floor(map/size);
   //frameRate(5);
 
   for (var   j = 0; j < rows; j++) {
@@ -38,12 +35,14 @@ function setup() {
 }
 
 function resetGame(){
-  animate_bool = false;
-  runScore = false;
+  animate_path = [];
   animate_counter = 0;
-  animate = [];
-  start = mapSetup[0];
-  end = mapSetup[mapSetup.length - 1];
+
+  isAnimate = false;
+  isRunning = false;
+
+  start_index = mapSetup[0];
+  end_index = mapSetup[mapSetup.length - 1];
   
   for (var i = 1; i < mapSetup.length - 1; i++) {
     grid[mapSetup[i]].s = false;
@@ -51,10 +50,9 @@ function resetGame(){
 }
 
 function resetMaze(){
-  //Clear Map
   for (var i = 0; i < grid.length; i++) {
     grid[i].visited = false;
-    grid[i].animate = false;
+    grid[i].animate_path = false;
     grid[i].path = false;
   }
 }
@@ -88,6 +86,11 @@ function executeAStar(start, end, mapPoint) {
   var e = graph.grid[e1][e2];
 
   var result = astar.search(graph, s, e);
+
+  return animatePath(col, result);
+}
+
+function animatePath(col, result){
   if(result.length < 1){
     alert("Invalid Maze.  There is no way through!");
     resetGame();
@@ -97,7 +100,7 @@ function executeAStar(start, end, mapPoint) {
   for(var i = 0 ; i < result.length ; i++){
     var v = (result[i].y * rows) + result[i].x;
     grid[v].path = true;
-    animate.push(v);
+    animate_path.push(v);
 
     if (i == result.length - 1){
       // start = v;
@@ -105,22 +108,17 @@ function executeAStar(start, end, mapPoint) {
       col[result[i].y][result[i].x] = 0;
     }
   }
+
   mapPoint++;
+
   if(mapPoint < mapSetup.length){
-    animate.push(v);
+    animate_path.push(v);
     start = mapSetup[mapPoint-1];
     end = mapSetup[mapPoint];
     return executeAStar(start, end, mapPoint);
   }else {
     return true;
   }
-}
-
-function mouseTile(){
-  w2 = (int)(mouseX / w);
-  h2 = (int)(mouseY / w);
-  t2 = (int)(h2 * cols) + w2;
-  return grid[t2];
 }
 
 function mouseDragged(){
@@ -141,69 +139,81 @@ function mousePressed() {
   }
 }
 
+function mouseTile(){
+  w2 = (int)(mouseX / size);
+  h2 = (int)(mouseY / size);
+  t2 = (int)(h2 * cols) + w2;
+  return grid[t2];
+}
+
 function isRunning(){
-  return (runScore || animate_bool);
+  return (isRunning || isAnimate);
 }
 
 function keyPressed() {
-  current = grid[start];
-  //SPACE
   if(keyCode == 32){
     if(isRunning()){
 
     }else{
-      runScore = true;
+      isRunning = true;
       score = 0;
     }
-  }
-  if(keyCode == ENTER){
+  }else if(keyCode == ENTER){
     resetGame();
     resetMaze();
   }
 }
 
-function draw() {
-  background(51);
-  for (var i = 0; i < grid.length; i++) {
-    grid[i].show();
-  }
+function drawAnimate(){
+    isRunning = false;
 
-  grid[start].s = true;
-  grid[end].e = true;
-  for (var i = 1; i < mapSetup.length - 1; i++){
-    grid[mapSetup[i]].points = true;
-    grid[mapSetup[i]].number = i;
-  }
-
-  if(runScore){
-    animate_bool = executeAStar(start, mapSetup[1], 1);
-    runScore = false;
-  }
-
-  if(animate_bool){
-    
-    runScore = false;
-
-    var v = animate[animate_counter];
+    var v = animate_path[animate_counter];
     if(animate_counter > 0){
-      grid[animate[animate_counter-1]].animate = false;
+      grid[animate_path[animate_counter-1]].animate_path = false;
 
-      if(v == animate[animate_counter-1]){
+      if(v == animate_path[animate_counter-1]){
         grid[v].s = true;
       }
     }
-    grid[v].animate = true;
+    grid[v].animate_path = true;
 
     score++;
     animate_counter++;
 
-    if(animate_counter >= animate.length){
+    if(animate_counter >= animate_path.length){
       // console.log("Score : " + animate_counter);
       
       animate_counter = 0;
-      animate_bool = false;
+      isAnimate = false;
       resetGame();
     }
+}
+
+function drawMap(){
+  background(51);
+  
+  for (var i = 0; i < grid.length; i++) {
+    grid[i].show();
+  }
+
+  grid[start_index].s = true;
+  grid[end_index].e = true;
+  for (var i = 1; i < mapSetup.length - 1; i++){
+    grid[mapSetup[i]].points = true;
+    grid[mapSetup[i]].number = i;
+  }
+}
+
+function draw() {
+  drawMap();
+
+  if(isRunning){
+    isAnimate = executeAStar(start_index, mapSetup[1], 1);
+    isRunning = false;
+  }
+
+  if(isAnimate){
+    drawAnimate();
   }
 
   drawConsole();
